@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صانع الفيديو من الصور</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.20.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <main id="app">
+        <header class="app-header">
+            <h1>صانع الفيديو من الصور</h1>
+            <p>حوّل صورك إلى فيديو سينمائي مذهل بتأثير إعلان العطور الفاخر.</p>
+        </header>
+
+        <div id="main-content">
+            <div id="upload-container" class="card">
+                <img id="image-preview" src="#" alt="معاينة الصورة" class="image-preview" style="display:none;"/>
+                <label for="image-upload" class="upload-label" role="button" tabindex="0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <span>اختر صورة</span>
+                </label>
+                <input type="file" id="image-upload" accept="image/*" aria-label="رفع صورة">
+                <button id="generate-btn" disabled>إنشاء الفيديو</button>
+            </div>
+
+            <div id="loader" class="card" style="display:none;" aria-live="polite">
+                <div class="spinner"></div>
+                <p id="loading-message">جاري إنشاء الفيديو الخاص بك...</p>
+            </div>
+
+            <div id="video-container" class="card" style="display:none;">
+                <h2>الفيديو الخاص بك جاهز!</h2>
+                <video id="video-player" controls autoplay loop muted playsinline></video>
+                <button id="reset-btn">البدء من جديد</button>
+            </div>
+
+            <div id="error-container" class="error-card" style="display:none;" role="alert"></div>
+        </div>
+    </main>
+    <script type="module" src="index.tsx"></script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
