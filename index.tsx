@@ -5,6 +5,9 @@
 
 import { GoogleGenAI } from "@google/genai";
 
+// Read API Key from the global window object set by config.js
+const API_KEY = (window as any).GEMINI_API_KEY;
+
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Element References
     const imageUploadInput = document.getElementById('image-upload') as HTMLInputElement;
@@ -17,6 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadContainer = document.getElementById('upload-container') as HTMLDivElement;
     const errorContainer = document.getElementById('error-container') as HTMLDivElement;
     const loadingMessage = document.getElementById('loading-message') as HTMLParagraphElement;
+
+    // --- Check for API Key ---
+    if (!API_KEY) {
+        uploadContainer.style.display = 'none';
+        errorContainer.textContent = 'خطأ في الإعداد: مفتاح API غير موجود. يرجى التأكد من إضافته بشكل صحيح في إعدادات Netlify.';
+        errorContainer.style.display = 'block';
+        return; // Stop execution if no API key
+    }
 
     let imageBase64: string | null = null;
     let imageMimeType: string | null = null;
@@ -83,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
         videoPlayer.src = '';
 
         try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+            const ai = new GoogleGenAI({ apiKey: API_KEY });
             const prompt = "Animate only the main subject in this image. The camera must be absolutely fixed and static. Do not zoom, pan, tilt, or move the camera in any way. The background must also remain completely still. Do not add any visual effects like smoke, vapor, dust, or particles. The animation should be subtle and short.";
             
             setLoadingMessage("جاري تهيئة عملية إنشاء الفيديو...");
@@ -114,7 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (operation.error) {
-                throw new Error(operation.error.message || 'حدث خطأ غير معروف أثناء إنشاء الفيديو.');
+                // Fix: Ensure argument to Error constructor is always a string.
+                throw new Error(String(operation.error.message || 'حدث خطأ غير معروف أثناء إنشاء الفيديو.'));
             }
 
             const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
@@ -123,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             setLoadingMessage("جاري تحميل الفيديو...");
-            const response = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
+            const response = await fetch(`${downloadLink}&key=${API_KEY}`);
             if (!response.ok) {
                 throw new Error(`فشل تحميل الفيديو: ${response.statusText}`);
             }
@@ -146,7 +158,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     resetButton.addEventListener('click', resetUI);
     
-    resetUI(); // Initialize UI on first load
+    // Initialize UI on first load, but only if the API key exists
+    if (API_KEY) {
+        resetUI(); 
+    }
 });
 
 function setLoadingMessage(message: string) {
